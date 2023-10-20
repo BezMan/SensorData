@@ -1,6 +1,11 @@
+import org.jetbrains.kotlin.kapt3.base.Kapt.kapt
+
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
+    id("dagger.hilt.android.plugin")
+    id("kotlin-kapt")
+    kotlin("kapt")
 }
 
 android {
@@ -66,4 +71,17 @@ dependencies {
     androidTestImplementation("androidx.compose.ui:ui-test-junit4")
     debugImplementation("androidx.compose.ui:ui-tooling")
     debugImplementation("androidx.compose.ui:ui-test-manifest")
+
+
+
+    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.7.0-alpha03")
+    implementation("androidx.navigation:navigation-compose:2.7.4")
+
+    implementation("androidx.compose.runtime:runtime-livedata:1.5.4")
+
+    // Dagger Hilt
+    implementation("com.google.dagger:hilt-android:2.47")
+    kapt("com.google.dagger:hilt-android-compiler:2.47")
+    kapt("com.google.dagger:hilt-compiler:2.47")
+    implementation("androidx.hilt:hilt-navigation-compose:1.0.0")
 }
