@@ -1,4 +1,4 @@
-package com.example.facerecognition.ui
+package com.example.facerecognition.ui.navigation
 
 sealed class Screen(val route: String) {
     object Welcome : Screen("welcome")

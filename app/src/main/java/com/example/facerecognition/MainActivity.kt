@@ -3,15 +3,9 @@ package com.example.facerecognition
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
-import com.example.facerecognition.ui.AppNavigation
+import com.example.facerecognition.ui.navigation.AppNavigation
 import com.example.facerecognition.ui.theme.FaceRecognitionTheme
+
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -19,10 +13,12 @@ class MainActivity : ComponentActivity() {
         setContent {
             FaceRecognitionTheme {
                 AppNavigation()
+
             }
         }
     }
 }
+
 
 
 //@Composable

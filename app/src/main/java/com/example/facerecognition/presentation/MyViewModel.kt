@@ -1,11 +1,13 @@
-package com.example.facerecognition.ui
+package com.example.facerecognition.presentation
 
+import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.ViewModel
 import com.example.facerecognition.SessionData
+import com.example.facerecognition.ui.navigation.Screen
 
 class MyViewModel : ViewModel() {
 
@@ -32,4 +34,33 @@ class MyViewModel : ViewModel() {
     fun shareCsv() {
         // Generate and share the CSV file.
     }
+
+    private val REQUIRED_PERMISSIONS = arrayOf(
+        android.Manifest.permission.CAMERA,
+        // Add other necessary permissions here
+    )
+
+
+    var isCameraPermissionGranted by mutableStateOf(false)
+    var isCameraStarted by mutableStateOf(false)
+
+    // Add other ViewModel states and dependencies as needed
+
+    fun allPermissionsGranted(): Boolean {
+        // Check if all required permissions are granted
+        // Implement your logic here
+        return isCameraPermissionGranted
+    }
+
+    fun requestPermissions(
+        activityResultLauncher: ManagedActivityResultLauncher<Array<String>, Map<String, Boolean>>
+    ) {
+        activityResultLauncher.launch(REQUIRED_PERMISSIONS)
+    }
+
+    fun startCamera() {
+        // Start the camera
+        isCameraStarted = true
+    }
+
 }
