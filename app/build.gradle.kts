@@ -84,4 +84,7 @@ dependencies {
     kapt("com.google.dagger:hilt-android-compiler:2.47")
     kapt("com.google.dagger:hilt-compiler:2.47")
     implementation("androidx.hilt:hilt-navigation-compose:1.0.0")
+
+    // Face features
+    implementation("com.google.mlkit:face-detection:16.1.5")
 }
