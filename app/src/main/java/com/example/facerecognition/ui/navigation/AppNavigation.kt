@@ -35,8 +35,8 @@ fun AppNavigation() {
         composable(Screen.FaceRecognition.route) {
             FaceRecognitionScreen(
                 navController,
-                imageCapture = myViewModel.imageCapture, // Injected ImageCapture via Hilt
-                faceDetector = myViewModel.faceDetector, // Injected FaceDetector via Hilt
+//                imageCapture = myViewModel.imageCapture, // Injected ImageCapture via Hilt
+//                faceDetector = myViewModel.faceDetector, // Injected FaceDetector via Hilt
                 myViewModel
             )
         }

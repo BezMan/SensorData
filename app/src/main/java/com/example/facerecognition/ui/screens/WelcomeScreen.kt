@@ -56,8 +56,8 @@ fun WelcomeScreen(navController: NavController, viewModel: MyViewModel) {
                             // Implement your light sensor check logic here
 
 
-                            if (isLightConditionSuitable) {
-
+                            if (true) {
+//                            if (isLightConditionSuitable) {
 
                                 // Navigate to the appropriate screen when light conditions are suitable
                                 navController.navigate(Screen.FaceRecognition.route)
