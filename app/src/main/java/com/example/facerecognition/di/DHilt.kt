@@ -8,22 +8,22 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 
-@Module
-@InstallIn(SingletonComponent::class)
-object CameraModule {
-
-    @Provides
-    fun provideCameraSelector(): CameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
-
-    @Provides
-    fun provideImageCapture(): ImageCapture {
-        val imageCaptureConfig = ImageCaptureConfig.Builder()
-            .setCaptureMode(ImageCapture.CAPTURE_MODE_MINIMIZE_LATENCY)
-            .build()
-
-        return ImageCapture(imageCaptureConfig)
-    }
-}
+//@Module
+//@InstallIn(SingletonComponent::class)
+//object CameraModule {
+//
+//    @Provides
+//    fun provideCameraSelector(): CameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
+//
+//    @Provides
+//    fun provideImageCapture(): ImageCapture {
+//        val imageCaptureConfig = ImageCaptureConfig.Builder()
+//            .setCaptureMode(ImageCapture.CAPTURE_MODE_MINIMIZE_LATENCY)
+//            .build()
+//
+//        return ImageCapture(imageCaptureConfig)
+//    }
+//}
 
 //@Module
 //@InstallIn(ViewModelComponent::class)
