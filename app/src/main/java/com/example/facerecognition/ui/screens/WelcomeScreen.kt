@@ -29,21 +29,11 @@ fun WelcomeScreen(navController: NavController, viewModel: MyViewModel) {
     ) { permissions ->
         val permissionGranted = permissions.entries.all { it.value }
 
-        if (permissionGranted) {
-            val isLightConditionSuitable = // Implement your light sensor check logic here
-                if (isLightConditionSuitable) {
-                    // Navigate to the appropriate screen when light conditions are suitable
-                    navController.navigate(Screen.FaceRecognition.route)
-                } else {
-                    // Navigate to the "LightSensorScreen" when light conditions are not suitable
-                    navController.navigate(Screen.LightSensor.route)
-                }
-        } else {
-            Toast.makeText(context, "Permission request denied", Toast.LENGTH_SHORT).show()
+        if (!permissionGranted) {
+            Toast.makeText(context, "Permission was denied", Toast.LENGTH_SHORT).show()
         }
     }
 
-    viewModel.requestPermissions(activityResultLauncher)
 
     Box(
         modifier = Modifier.fillMaxSize(),
@@ -56,9 +46,28 @@ fun WelcomeScreen(navController: NavController, viewModel: MyViewModel) {
             Text(text = "Welcome to Face Recognition App")
             Button(
                 onClick = {
-                    // Check for camera permissions and request if needed
-                    if (viewModel.allPermissionsGranted()) {
-                        viewModel.startCamera()
+                    // Check if all required permissions are granted
+                    if (viewModel.areAllPermissionsGranted(context)
+                    // Implement your logic here
+
+                    ) {
+
+                        val isLightConditionSuitable =
+                            // Implement your light sensor check logic here
+
+
+                            if (isLightConditionSuitable) {
+
+
+                                // Navigate to the appropriate screen when light conditions are suitable
+                                navController.navigate(Screen.FaceRecognition.route)
+                            } else {
+                                // Navigate to the "LightSensorScreen" when light conditions are not suitable
+                                navController.navigate(Screen.LightSensor.route)
+                            }
+
+
+                        //                        viewModel.startCamera()
                     } else {
                         viewModel.requestPermissions(activityResultLauncher)
                     }
