@@ -1,13 +1,15 @@
 package com.example.facerecognition.ui.screens
 
+
 import android.content.Context
 import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.graphics.Matrix
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
-import androidx.camera.core.CameraSelector
-import androidx.camera.core.ImageCapture
-import androidx.camera.core.ImageCaptureException
-import androidx.camera.core.ImageProxy
+import androidx.camera.core.*
+import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.view.CameraController
 import androidx.camera.view.LifecycleCameraController
 import androidx.camera.view.PreviewView
@@ -15,16 +17,10 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.rememberUpdatedState
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
@@ -36,17 +32,20 @@ import com.google.mlkit.vision.face.Face
 import com.google.mlkit.vision.face.FaceDetection
 import com.google.mlkit.vision.face.FaceDetector
 import com.google.mlkit.vision.face.FaceDetectorOptions
-import kotlinx.coroutines.delay
+import java.io.File
+import java.util.concurrent.Executors
+import java.util.concurrent.atomic.AtomicInteger
 
 @Composable
 fun FaceRecognitionScreen(
     navController: NavController,
     myViewModel: MyViewModel
 ) {
+    val context = LocalContext.current
     val cameraExecutor = rememberCoroutineScope()
 
     val controller = remember {
-        LifecycleCameraController(navController.context).apply {
+        LifecycleCameraController(context).apply {
             setEnabledUseCases(CameraController.IMAGE_CAPTURE)
         }
     }
@@ -55,23 +54,32 @@ fun FaceRecognitionScreen(
     // State to track the number of photos taken
     var photosTaken by remember { mutableStateOf(0) }
 
+    // Set up the image capture use case
+    val imageCapture = remember {
+        ImageCapture.Builder()
+            .setCaptureMode(ImageCapture.CAPTURE_MODE_MINIMIZE_LATENCY)
+            .build()
+    }
+    val numPhotosToCapture = 30
+    val interval = 1000L
+
     // Start the camera capture session when the screen is first composed
     LaunchedEffect(Unit) {
-//        while (photosTaken < 30) {
-//            val timestamp = System.currentTimeMillis().toString()
-//            takePhoto(
-//                navController.context,
-//                controller = controller
-//            ) { capturedBitmap ->
-//                runFaceContourDetection(capturedBitmap)
-////                val isFaceRecognized = processFaceContourDetectionResult(capturedBitmap)
-////                myViewModel.onCameraPhotoCaptured(timestamp, isFaceRecognized)
-//            }
-//            photosTaken++
-//            delay(1000) // Capture a photo every second
-//        }
-        myViewModel.onCameraSessionCompleted()
-        // Once 30 photos are taken, you can navigate or perform other actions.
+        val handler = Handler(Looper.getMainLooper())
+        val photosTaken = AtomicInteger(0)
+
+        val runnable = object : Runnable {
+            override fun run() {
+                if (photosTaken.get() < numPhotosToCapture) {
+                    captureImage(context, controller, imageCapture) { capturedBitmap ->
+                        runFaceContourDetection(capturedBitmap)
+                    }
+                    photosTaken.incrementAndGet()
+                    handler.postDelayed(this, interval)
+                }
+            }
+        }
+        handler.postDelayed(runnable, interval)
     }
 
     Box(
@@ -96,12 +104,12 @@ fun FaceRecognitionScreen(
     }
 }
 
-
 @Composable
 fun CameraPreview(
     controller: LifecycleCameraController,
     modifier: Modifier = Modifier
 ) {
+    val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
     AndroidView(
         factory = {
@@ -113,9 +121,35 @@ fun CameraPreview(
         modifier = modifier
     )
 }
-private fun runFaceContourDetection(bmp: Bitmap) {
+
+fun captureImage(
+    context: Context,
+    controller: LifecycleCameraController,
+    imageCapture: ImageCapture,
+    onPhotoTaken: (Bitmap) -> Unit
+) {
+    val outputFile = File(context.cacheDir, "temp_image.jpg")
+    val outputOptions = ImageCapture.OutputFileOptions.Builder(outputFile).build()
+    imageCapture.takePicture(
+        outputOptions,
+        Executors.newSingleThreadExecutor(),
+        object : ImageCapture.OnImageSavedCallback {
+            override fun onError(exc: ImageCaptureException) {
+                // Handle image capture error
+                exc.printStackTrace()
+            }
+
+            override fun onImageSaved(output: ImageCapture.OutputFileResults) {
+                val savedImageFile = output.savedUri
+                val bitmap = BitmapFactory.decodeFile(savedImageFile?.path)
+                onPhotoTaken(bitmap)
+            }
+        }
+    )
+}
+
+fun runFaceContourDetection(bmp: Bitmap) {
     val image = InputImage.fromBitmap(bmp, 0)
-//    val image = InputImage.fromBitmap(Bitmap.createBitmap(1,1,Bitmap.Config.ALPHA_8), 0)
     val options = FaceDetectorOptions.Builder()
         .setPerformanceMode(FaceDetectorOptions.PERFORMANCE_MODE_FAST)
         .setContourMode(FaceDetectorOptions.CONTOUR_MODE_ALL)
@@ -126,54 +160,13 @@ private fun runFaceContourDetection(bmp: Bitmap) {
             processFaceContourDetectionResult(faces)
         }
         .addOnFailureListener(
-            OnFailureListener { e -> // Task failed with an exception
+            OnFailureListener { e ->
                 e.printStackTrace()
             })
 }
 
-private fun processFaceContourDetectionResult(faces: List<Face>) {
-    // Task completed successfully
+fun processFaceContourDetectionResult(faces: List<Face>) {
     if (faces.isEmpty()) {
-//        showToast("No face found")
-//        return
+        // Handle no face found
     }
-}
-
-private fun takePhoto(
-    context: Context,
-    controller: LifecycleCameraController,
-    onPhotoTaken: (Bitmap) -> Unit
-) {
-    controller.takePicture(
-        ContextCompat.getMainExecutor(context),
-        object : ImageCapture.OnImageCapturedCallback() {
-            override fun onCaptureSuccess(image: ImageProxy) {
-                super.onCaptureSuccess(image)
-
-                val matrix = Matrix().apply {
-                    postRotate(image.imageInfo.rotationDegrees.toFloat())
-                }
-                val rotatedBitmap = Bitmap.createBitmap(
-                    image.toBitmap(),
-                    0,
-                    0,
-                    image.width,
-                    image.height,
-                    matrix,
-                    true
-                )
-
-                // Call the callback with the captured bitmap
-                onPhotoTaken(rotatedBitmap)
-
-                // Close the image proxy to release resources
-                image.close()
-            }
-
-            override fun onError(exception: ImageCaptureException) {
-                super.onError(exception)
-                Log.e("Camera", "Couldn't take photo: ", exception)
-            }
-        }
-    )
 }
