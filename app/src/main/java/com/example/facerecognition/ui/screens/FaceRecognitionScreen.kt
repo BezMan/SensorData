@@ -1,12 +1,10 @@
 package com.example.facerecognition.ui.screens
 
-
 import android.content.Context
 import android.hardware.Sensor
 import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
 import android.hardware.SensorManager
-import android.util.Log
 import androidx.camera.core.CameraSelector
 import androidx.camera.view.CameraController
 import androidx.camera.view.LifecycleCameraController
@@ -18,7 +16,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -35,7 +33,7 @@ import com.example.facerecognition.ui.navigation.Screen
 @Composable
 fun FaceRecognitionScreen(
     navController: NavController,
-    myViewModel: MyViewModel
+    viewModel: MyViewModel
 ) {
     val context = LocalContext.current
 
@@ -47,44 +45,45 @@ fun FaceRecognitionScreen(
     controller.cameraSelector = CameraSelector.DEFAULT_FRONT_CAMERA
 
     // State to track the number of photos taken
-    var taken by remember { mutableStateOf(0) }
-
+    var taken by remember { mutableIntStateOf(0) }
+    // Lux value
+    var lux by remember { mutableIntStateOf(0) }
 
     val sensorManager = context.getSystemService(Context.SENSOR_SERVICE) as SensorManager
     val lightSensor = sensorManager.getDefaultSensor(Sensor.TYPE_LIGHT)
 
-    DisposableEffect(lightSensor) {
-        val listener = object : SensorEventListener {
-            private var lastEventTime = 0L
+    val sensorListener = object : SensorEventListener {
+        private var lastEventTime = 0L
 
-            override fun onSensorChanged(event: SensorEvent?) {
+        override fun onSensorChanged(event: SensorEvent?) {
+            if (viewModel.isListAtLimit()) {
+                endSession(navController, viewModel)
+            } else {
                 // Get the current time
                 val currentTime = System.currentTimeMillis()
 
                 // Check if the last event was more than 1000 ms ago
                 if (currentTime - lastEventTime >= 1000L) {
                     // Get the light sensor Lux value
-                    val lux = event?.values?.get(0) ?: 0f
-
+                    val luxValue = event?.values?.get(0) ?: 0f
+                    lux = luxValue.toInt() // Update the lux value
 
                     lastEventTime = currentTime
                     // Do something with the light sensor Lux value
-                    Log.d("zzzzz", lux.toString())
 
-                    FileData(currentTime.toString(), MyUtils.isLightInRange(lux))
+                    val fileData = FileData(currentTime.toString(), MyUtils.isLightInRange(luxValue))
+                    viewModel.onDataCaptured(fileData)
                 }
-
             }
-
-            override fun onAccuracyChanged(p0: Sensor?, p1: Int) {
-            }
-
         }
 
-        sensorManager.registerListener(listener, lightSensor, SensorManager.SENSOR_DELAY_NORMAL)
+        override fun onAccuracyChanged(p0: Sensor?, p1: Int) {}
+    }
 
+    DisposableEffect(lightSensor) {
+        sensorManager.registerListener(sensorListener, lightSensor, SensorManager.SENSOR_DELAY_NORMAL)
         onDispose {
-            sensorManager.unregisterListener(listener)
+            sensorManager.unregisterListener(sensorListener)
         }
     }
 
@@ -96,14 +95,15 @@ fun FaceRecognitionScreen(
             modifier = Modifier.fillMaxSize(),
             controller = controller
         )
+        // Lux value
+        Text(
+            text = "Lux: $lux", // Display the lux value
+            modifier = Modifier.align(Alignment.Center)
+        )
 
-        // Your UI elements, and a "Complete Session" button
         Button(
             onClick = {
-                navController.navigate(Screen.SessionSummary.route) {
-                    popUpTo(Screen.SessionSummary.route) { inclusive = true }
-                }
-                myViewModel.onCameraSessionCompleted()
+                endSession(navController, viewModel)
             },
             modifier = Modifier.align(Alignment.BottomCenter)
         ) {
@@ -112,12 +112,24 @@ fun FaceRecognitionScreen(
     }
 }
 
+private fun endSession(
+    navController: NavController,
+    viewModel: MyViewModel
+) {
+    if(viewModel.inSession) {
+        navController.navigate(Screen.SessionSummary.route) {
+            popUpTo(Screen.SessionSummary.route) { inclusive = true }
+        }
+        viewModel.onCameraSessionCompleted()
+    }
+    viewModel.inSession = false
+}
+
 @Composable
 fun CameraPreview(
     controller: LifecycleCameraController,
     modifier: Modifier = Modifier
 ) {
-    val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
     AndroidView(
         factory = {

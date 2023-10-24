@@ -7,24 +7,28 @@ import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModel
 import com.example.facerecognition.SessionData
 import com.example.facerecognition.data.model.FileData
 import com.example.facerecognition.data.repository.CsvFileHandler
 import com.example.facerecognition.data.repository.IFileHandler
-import com.example.facerecognition.ui.navigation.Screen
 
 class MyViewModel : ViewModel() {
 
+    private val listLimit = 30
+//    private val listLimit = 5
 
     private val fileDataList = mutableListOf<FileData>()
     private val csvFileHandler: IFileHandler = CsvFileHandler()
 
-    fun onCameraPhotoCaptured(timestamp: String, isFaceRecognized: Boolean) {
-        val fileData = FileData(timestamp, isFaceRecognized)
+    fun onDataCaptured(fileData: FileData) {
         fileDataList.add(fileData)
+    }
+
+
+    fun isListAtLimit(): Boolean {
+        return fileDataList.size >= listLimit
     }
 
     fun onCameraSessionCompleted() {
@@ -32,26 +36,11 @@ class MyViewModel : ViewModel() {
         csvFileHandler.saveDataToFile(fileDataList)
     }
 
+    var inSession by mutableStateOf(true)
 
-    var currentScreen by mutableStateOf<Screen>(Screen.Welcome)
+
     var isLightConditionSuitable by mutableStateOf(false)
-    var isCameraActive by mutableStateOf(false)
-    var cameraPreview by mutableStateOf<Preview?>(null)
-    var isFaceRecognized by mutableStateOf(false)
     var sessionData by mutableStateOf<List<SessionData>>(emptyList())
-    var sessionDuration by mutableStateOf(0L)
-    var isSessionSummaryScreenActive by mutableStateOf(false)
-    var generatedCsv by mutableStateOf<String?>(null)
-
-    // Functions to update state and perform actions based on user interactions.
-
-    fun startSession() {
-        // Start a new session.
-    }
-
-    fun completeSession() {
-        // Complete the session and navigate to the summary screen.
-    }
 
     fun shareCsv() {
         // Generate and share the CSV file.
@@ -65,7 +54,11 @@ class MyViewModel : ViewModel() {
 
     fun areAllPermissionsGranted(context: Context): Boolean {
         for (permission in REQUIRED_PERMISSIONS) {
-            if (ContextCompat.checkSelfPermission(context, permission) != PackageManager.PERMISSION_GRANTED) {
+            if (ContextCompat.checkSelfPermission(
+                    context,
+                    permission
+                ) != PackageManager.PERMISSION_GRANTED
+            ) {
                 return false
             }
         }
@@ -74,7 +67,8 @@ class MyViewModel : ViewModel() {
 
 
     fun requestPermissions(
-        activityResultLauncher: ManagedActivityResultLauncher<Array<String>, Map<String, Boolean>>) {
+        activityResultLauncher: ManagedActivityResultLauncher<Array<String>, Map<String, Boolean>>
+    ) {
         activityResultLauncher.launch(REQUIRED_PERMISSIONS)
     }
 }
