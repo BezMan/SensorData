@@ -54,15 +54,15 @@ fun SessionSummaryScreen(
 // Implement these functions to calculate durations based on your session data
 fun calculateSessionDuration(sessionData: List<SessionData>): String {
     // Implement the logic to calculate session duration
-    return "HH:mm:ss"
+    return sessionData.size.toString()
 }
 
 fun calculateFaceDetectedDuration(sessionData: List<SessionData>): String {
     // Implement the logic to calculate face detected duration
-    return "HH:mm:ss"
+    return sessionData.filter { it.faceRecognized }.size.toString()
 }
 
 fun calculateFaceNotDetectedDuration(sessionData: List<SessionData>): String {
     // Implement the logic to calculate face not detected duration
-    return "HH:mm:ss"
+    return sessionData.filter { !it.faceRecognized }.size.toString()
 }

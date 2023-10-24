@@ -68,7 +68,8 @@ fun FaceRecognitionScreen(
                     lastEventTime = currentTime
                     // Do something with the light sensor Lux value
 
-                    val sessionData = SessionData(currentTime.toString(), MyUtils.isLightInRange(luxValue))
+                    val sessionData =
+                        SessionData(currentTime.toString(), MyUtils.isLightInRange(luxValue))
                     viewModel.onDataCaptured(sessionData)
                 }
             }
@@ -78,9 +79,15 @@ fun FaceRecognitionScreen(
     }
 
     DisposableEffect(lightSensor) {
-        sensorManager.registerListener(sensorListener, lightSensor, SensorManager.SENSOR_DELAY_NORMAL)
+        sensorManager.registerListener(
+            sensorListener,
+            lightSensor,
+            SensorManager.SENSOR_DELAY_NORMAL
+        )
+        startSession(viewModel)
         onDispose {
             sensorManager.unregisterListener(sensorListener)
+            endSession(navController, viewModel)
         }
     }
 
@@ -109,16 +116,20 @@ fun FaceRecognitionScreen(
     }
 }
 
+fun startSession(viewModel: MyViewModel) {
+    viewModel.startSession()
+}
+
 private fun endSession(
     navController: NavController,
     viewModel: MyViewModel
 ) {
-    if(viewModel.inSession) {
-        navController.navigate(Screen.SessionSummary.route) {
-            popUpTo(Screen.SessionSummary.route) { inclusive = true }
-        }
-        viewModel.onCameraSessionCompleted()
+    viewModel.onCameraSessionCompleted()
+
+    navController.navigate(Screen.SessionSummary.route) {
+        popUpTo(Screen.SessionSummary.route) { inclusive = true }
     }
+
 }
 
 @Composable

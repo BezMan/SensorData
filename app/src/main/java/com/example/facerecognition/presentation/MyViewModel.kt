@@ -38,7 +38,12 @@ class MyViewModel @Inject constructor(
     }
 
 
-    var inSession by mutableStateOf(true)
+    private var inSession by mutableStateOf(false)
+
+    fun startSession() {
+        sessionDataList.clear()
+        inSession = true
+    }
 
     fun onCameraSessionCompleted() {
         // Call the repository or the CSVFileHandler to save the data to the CSV file
