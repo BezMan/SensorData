@@ -1,7 +1,7 @@
 package com.example.facerecognition.data.repository
 
-import com.example.facerecognition.data.model.FileData
+import com.example.facerecognition.data.model.SessionData
 
 interface IFileHandler {
-    fun saveDataToFile(data: List<FileData>)
+    fun saveDataToFile(data: List<SessionData>)
 }

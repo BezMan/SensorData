@@ -16,7 +16,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -25,7 +25,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.navigation.NavController
-import com.example.facerecognition.data.model.FileData
+import com.example.facerecognition.data.model.SessionData
 import com.example.facerecognition.utils.MyUtils
 import com.example.facerecognition.presentation.MyViewModel
 import com.example.facerecognition.ui.navigation.Screen
@@ -44,10 +44,8 @@ fun FaceRecognitionScreen(
     }
     controller.cameraSelector = CameraSelector.DEFAULT_FRONT_CAMERA
 
-    // State to track the number of photos taken
-    var taken by remember { mutableIntStateOf(0) }
     // Lux value
-    var lux by remember { mutableIntStateOf(0) }
+    var luxValue by remember { mutableFloatStateOf(0f) }
 
     val sensorManager = context.getSystemService(Context.SENSOR_SERVICE) as SensorManager
     val lightSensor = sensorManager.getDefaultSensor(Sensor.TYPE_LIGHT)
@@ -65,14 +63,13 @@ fun FaceRecognitionScreen(
                 // Check if the last event was more than 1000 ms ago
                 if (currentTime - lastEventTime >= 1000L) {
                     // Get the light sensor Lux value
-                    val luxValue = event?.values?.get(0) ?: 0f
-                    lux = luxValue.toInt() // Update the lux value
+                    luxValue = event?.values?.get(0) ?: 0f
 
                     lastEventTime = currentTime
                     // Do something with the light sensor Lux value
 
-                    val fileData = FileData(currentTime.toString(), MyUtils.isLightInRange(luxValue))
-                    viewModel.onDataCaptured(fileData)
+                    val sessionData = SessionData(currentTime.toString(), MyUtils.isLightInRange(luxValue))
+                    viewModel.onDataCaptured(sessionData)
                 }
             }
         }
@@ -97,7 +94,7 @@ fun FaceRecognitionScreen(
         )
         // Lux value
         Text(
-            text = "Lux: $lux", // Display the lux value
+            text = "Lux: $luxValue", // Display the lux value
             modifier = Modifier.align(Alignment.Center)
         )
 
@@ -122,7 +119,6 @@ private fun endSession(
         }
         viewModel.onCameraSessionCompleted()
     }
-    viewModel.inSession = false
 }
 
 @Composable

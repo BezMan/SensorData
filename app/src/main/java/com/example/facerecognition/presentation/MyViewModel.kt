@@ -9,38 +9,43 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModel
-import com.example.facerecognition.SessionData
-import com.example.facerecognition.data.model.FileData
-import com.example.facerecognition.data.repository.CsvFileHandler
-import com.example.facerecognition.data.repository.IFileHandler
+import com.example.facerecognition.data.model.SessionData
+import com.example.facerecognition.data.repository.Repository
+import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 
-class MyViewModel : ViewModel() {
+@HiltViewModel
+class MyViewModel @Inject constructor(
+    private val repository: Repository
+) : ViewModel() {
 
     private val listLimit = 30
 //    private val listLimit = 5
 
-    private val fileDataList = mutableListOf<FileData>()
-    private val csvFileHandler: IFileHandler = CsvFileHandler()
+    private val sessionDataList = mutableListOf<SessionData>()
 
-    fun onDataCaptured(fileData: FileData) {
-        fileDataList.add(fileData)
+    fun onDataCaptured(sessionData: SessionData) {
+        sessionDataList.add(sessionData)
+    }
+
+    fun getDataList() : List<SessionData> {
+        return sessionDataList
     }
 
 
     fun isListAtLimit(): Boolean {
-        return fileDataList.size >= listLimit
+        return sessionDataList.size >= listLimit
     }
 
-    fun onCameraSessionCompleted() {
-        // Call the repository or the CSVFileHandler to save the data to the CSV file
-        csvFileHandler.saveDataToFile(fileDataList)
-    }
 
     var inSession by mutableStateOf(true)
 
+    fun onCameraSessionCompleted() {
+        // Call the repository or the CSVFileHandler to save the data to the CSV file
+        inSession = false
+        repository.saveDataToFile(sessionDataList)
+    }
 
-    var isLightConditionSuitable by mutableStateOf(false)
-    var sessionData by mutableStateOf<List<SessionData>>(emptyList())
 
     fun shareCsv() {
         // Generate and share the CSV file.

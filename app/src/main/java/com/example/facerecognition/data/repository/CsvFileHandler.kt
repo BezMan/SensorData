@@ -1,16 +1,14 @@
 package com.example.facerecognition.data.repository
 
-import com.example.facerecognition.data.model.FileData
+import com.example.facerecognition.data.model.SessionData
 import com.opencsv.CSVReader
 import java.io.BufferedReader
 import java.io.File
 import java.io.FileInputStream
-import java.io.FileReader
 import java.io.FileWriter
 import java.io.IOException
 import java.io.InputStreamReader
 import java.nio.charset.Charset
-import java.time.LocalDateTime
 
 class CsvFileHandler : IFileHandler {
 
@@ -22,7 +20,7 @@ class CsvFileHandler : IFileHandler {
         }
 
 
-    override fun saveDataToFile(data: List<FileData>) {
+    override fun saveDataToFile(data: List<SessionData>) {
         try {
             createFile()
             appendDataToFile(data)
@@ -40,7 +38,7 @@ class CsvFileHandler : IFileHandler {
         writer?.write("timestamp,is_face_detected\n")
     }
 
-    private fun appendDataToFile(data: List<FileData>) {
+    private fun appendDataToFile(data: List<SessionData>) {
 //        val dataToSave = "$timestamp,${if (faceRecognized) 1 else 0}\n"
 //        writer?.write(dataToSave)
     }
