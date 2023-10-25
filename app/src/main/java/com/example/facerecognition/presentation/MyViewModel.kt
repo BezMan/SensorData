@@ -10,13 +10,13 @@ import androidx.compose.runtime.setValue
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModel
 import com.example.facerecognition.domain.model.ExportModel
-import com.example.facerecognition.data.repository.Repository
+import com.example.facerecognition.domain.repository.ExportRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
 @HiltViewModel
 class MyViewModel @Inject constructor(
-    private val repository: Repository
+    private val repository: ExportRepository
 ) : ViewModel() {
 
     private val listLimit = 30
@@ -48,7 +48,7 @@ class MyViewModel @Inject constructor(
     fun onCameraSessionCompleted() {
         // Call the repository or the CSVFileHandler to save the data to the CSV file
         inSession = false
-        repository.saveDataToFile(exportModelList)
+        repository.startExportData(exportModelList)
     }
 
 
