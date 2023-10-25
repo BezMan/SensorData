@@ -9,7 +9,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModel
-import com.example.facerecognition.data.model.SessionData
+import com.example.facerecognition.domain.model.ExportModel
 import com.example.facerecognition.data.repository.Repository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
@@ -22,33 +22,33 @@ class MyViewModel @Inject constructor(
     private val listLimit = 30
 //    private val listLimit = 5
 
-    private val sessionDataList = mutableListOf<SessionData>()
+    private val exportModelList = mutableListOf<ExportModel>()
 
-    fun onDataCaptured(sessionData: SessionData) {
-        sessionDataList.add(sessionData)
+    fun onDataCaptured(exportModel: ExportModel) {
+        exportModelList.add(exportModel)
     }
 
-    fun getDataList() : List<SessionData> {
-        return sessionDataList
+    fun getDataList() : List<ExportModel> {
+        return exportModelList
     }
 
 
     fun isListAtLimit(): Boolean {
-        return sessionDataList.size >= listLimit
+        return exportModelList.size >= listLimit
     }
 
 
     var inSession by mutableStateOf(false)
 
     fun startSession() {
-        sessionDataList.clear()
+        exportModelList.clear()
         inSession = true
     }
 
     fun onCameraSessionCompleted() {
         // Call the repository or the CSVFileHandler to save the data to the CSV file
         inSession = false
-        repository.saveDataToFile(sessionDataList)
+        repository.saveDataToFile(exportModelList)
     }
 
 

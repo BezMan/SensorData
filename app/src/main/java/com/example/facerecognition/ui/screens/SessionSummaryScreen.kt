@@ -11,11 +11,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.example.facerecognition.data.model.SessionData
+import com.example.facerecognition.domain.model.ExportModel
+import com.example.facerecognition.utils.MyUtils
 
 @Composable
 fun SessionSummaryScreen(
-    sessionData: List<SessionData>,
+    sessionData: List<ExportModel>,
     onDoneClicked: () -> Unit,
     onShareCsvClicked: () -> Unit
 ) {
@@ -52,17 +53,17 @@ fun SessionSummaryScreen(
 }
 
 // Implement these functions to calculate durations based on your session data
-fun calculateSessionDuration(sessionData: List<SessionData>): String {
+fun calculateSessionDuration(sessionData: List<ExportModel>): String {
     // Implement the logic to calculate session duration
     return sessionData.size.toString()
 }
 
-fun calculateFaceDetectedDuration(sessionData: List<SessionData>): String {
+fun calculateFaceDetectedDuration(sessionData: List<ExportModel>): String {
     // Implement the logic to calculate face detected duration
-    return sessionData.filter { it.faceRecognized }.size.toString()
+    return sessionData.filter { MyUtils.isLightInRange(it.sensorData) }.size.toString()
 }
 
-fun calculateFaceNotDetectedDuration(sessionData: List<SessionData>): String {
+fun calculateFaceNotDetectedDuration(sessionData: List<ExportModel>): String {
     // Implement the logic to calculate face not detected duration
-    return sessionData.filter { !it.faceRecognized }.size.toString()
+    return sessionData.filter { !MyUtils.isLightInRange(it.sensorData) }.size.toString()
 }

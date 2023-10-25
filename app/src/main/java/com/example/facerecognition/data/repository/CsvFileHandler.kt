@@ -1,6 +1,6 @@
 package com.example.facerecognition.data.repository
 
-import com.example.facerecognition.data.model.SessionData
+import com.example.facerecognition.domain.model.ExportModel
 import com.opencsv.CSVReader
 import java.io.BufferedReader
 import java.io.File
@@ -20,7 +20,7 @@ class CsvFileHandler : IFileHandler {
         }
 
 
-    override fun saveDataToFile(data: List<SessionData>) {
+    override fun saveDataToFile(data: List<ExportModel>) {
         try {
             createFile()
             appendDataToFile(data)
@@ -38,7 +38,7 @@ class CsvFileHandler : IFileHandler {
         writer?.write("timestamp,is_face_detected\n")
     }
 
-    private fun appendDataToFile(data: List<SessionData>) {
+    private fun appendDataToFile(data: List<ExportModel>) {
 //        val dataToSave = "$timestamp,${if (faceRecognized) 1 else 0}\n"
 //        writer?.write(dataToSave)
     }

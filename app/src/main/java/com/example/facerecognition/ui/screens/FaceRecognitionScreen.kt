@@ -26,7 +26,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.navigation.NavController
-import com.example.facerecognition.data.model.SessionData
+import com.example.facerecognition.domain.model.ExportModel
 import com.example.facerecognition.utils.MyUtils
 import com.example.facerecognition.presentation.MyViewModel
 import com.example.facerecognition.ui.navigation.Screen
@@ -73,9 +73,10 @@ fun FaceRecognitionScreen(
                     lastEventTime = currentTime
                     // Do something with the light sensor Lux value
 
-                    val sessionData =
-                        SessionData(currentTime.toString(), MyUtils.isLightInRange(luxValue))
-                    viewModel.onDataCaptured(sessionData)
+                    val exportModel =
+                        ExportModel(luxValue, currentTime)
+//                        ExportModel(currentTime.toString(), MyUtils.isLightInRange(luxValue))
+                    viewModel.onDataCaptured(exportModel)
                 }
             }
         }
