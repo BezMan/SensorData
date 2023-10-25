@@ -38,7 +38,7 @@ class MyViewModel @Inject constructor(
     }
 
 
-    private var inSession by mutableStateOf(false)
+    var inSession by mutableStateOf(false)
 
     fun startSession() {
         sessionDataList.clear()

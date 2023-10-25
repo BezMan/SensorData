@@ -25,7 +25,7 @@ fun AppNavigation() {
             WelcomeScreen(navController, myViewModel)
         }
         composable(Screen.LightSensor.route) {
-            LightSensorScreen(isLightConditionSuitable = true) {
+            LightSensorScreen {
                 // Callback for "Try Again" button
                 navController.navigate(Screen.Welcome.route) {
                     popUpTo(Screen.Welcome.route) { inclusive = true }
@@ -35,8 +35,6 @@ fun AppNavigation() {
         composable(Screen.FaceRecognition.route) {
             FaceRecognitionScreen(
                 navController,
-//                imageCapture = myViewModel.imageCapture, // Injected ImageCapture via Hilt
-//                faceDetector = myViewModel.faceDetector, // Injected FaceDetector via Hilt
                 myViewModel
             )
         }

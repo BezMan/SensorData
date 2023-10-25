@@ -14,30 +14,25 @@ import androidx.compose.ui.unit.dp
 
 @Composable
 fun LightSensorScreen(
-    isLightConditionSuitable: Boolean,
     onTryAgain: () -> Unit
 ) {
     Box(
         modifier = Modifier.fillMaxSize(),
         contentAlignment = Alignment.Center
     ) {
-        if (isLightConditionSuitable) {
-            // UI for suitable lighting conditions
-            Text(text = "Light conditions are suitable")
-        } else {
-            // UI for unsuitable lighting conditions
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center
+        // UI for unsuitable lighting conditions
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
+        ) {
+            Text(text = "The room is too bright/dark")
+            Button(
+                onClick = { onTryAgain() },
+                modifier = Modifier.padding(16.dp)
             ) {
-                Text(text = "The room is too bright/dark")
-                Button(
-                    onClick = { onTryAgain() },
-                    modifier = Modifier.padding(16.dp)
-                ) {
-                    Text(text = "Try Again")
-                }
+                Text(text = "Try Again")
             }
         }
     }
+
 }

@@ -1,5 +1,11 @@
 package com.example.facerecognition.ui.screens
 
+import android.content.Context
+import android.hardware.Sensor
+import android.hardware.SensorEvent
+import android.hardware.SensorEventListener
+import android.hardware.SensorManager
+import android.util.Log
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -18,6 +24,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.facerecognition.presentation.MyViewModel
 import com.example.facerecognition.ui.navigation.Screen
+import com.example.facerecognition.utils.MyUtils
 
 @Composable
 fun WelcomeScreen(navController: NavController, viewModel: MyViewModel) {
@@ -51,23 +58,38 @@ fun WelcomeScreen(navController: NavController, viewModel: MyViewModel) {
                     // Implement your logic here
 
                     ) {
+                        val sensorManager = context.getSystemService(Context.SENSOR_SERVICE) as SensorManager
+                        val lightSensor = sensorManager.getDefaultSensor(Sensor.TYPE_LIGHT)
 
-                        val isLightConditionSuitable =
-                            // Implement your light sensor check logic here
+// Create a sensor listener to listen for changes in the light sensor value
+                        val sensorListener = object : SensorEventListener {
+                            override fun onSensorChanged(event: SensorEvent?) {
+                                // Get the light sensor Lux value
+                                val luxValue = event?.values?.get(0) ?: 0f
 
+                                Log.d("zzzzz welcome", luxValue.toString())
 
-                            if (true) {
-//                            if (isLightConditionSuitable) {
+                                // Unregister the sensor listener
+                                sensorManager.unregisterListener(this)
 
-                                // Navigate to the appropriate screen when light conditions are suitable
-                                navController.navigate(Screen.FaceRecognition.route)
-                            } else {
-                                // Navigate to the "LightSensorScreen" when light conditions are not suitable
-                                navController.navigate(Screen.LightSensor.route)
+                                // Do something with the light sensor value
+                                if (MyUtils.isLightInRange(luxValue)) {
+
+                                    // Navigate to the appropriate screen when light conditions are suitable
+                                    navController.navigate(Screen.FaceRecognition.route)
+                                } else {
+                                    // Navigate to the "LightSensorScreen" when light conditions are not suitable
+                                    navController.navigate(Screen.LightSensor.route)
+                                }
                             }
 
+                            override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {
+                                // Handle changes in the accuracy of the light sensor
+                            }
+                        }
+                        // Register the sensor listener
+                        sensorManager.registerListener(sensorListener, lightSensor, SensorManager.SENSOR_DELAY_NORMAL)
 
-                        //                        viewModel.startCamera()
                     } else {
                         viewModel.requestPermissions(activityResultLauncher)
                     }

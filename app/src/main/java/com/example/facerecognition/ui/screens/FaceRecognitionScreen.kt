@@ -5,6 +5,7 @@ import android.hardware.Sensor
 import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
 import android.hardware.SensorManager
+import android.util.Log
 import androidx.camera.core.CameraSelector
 import androidx.camera.view.CameraController
 import androidx.camera.view.LifecycleCameraController
@@ -55,7 +56,9 @@ fun FaceRecognitionScreen(
 
         override fun onSensorChanged(event: SensorEvent?) {
             if (viewModel.isListAtLimit()) {
-                endSession(navController, viewModel)
+                if (viewModel.inSession) {
+                    endSession(navController, viewModel)
+                }
             } else {
                 // Get the current time
                 val currentTime = System.currentTimeMillis()
@@ -64,6 +67,8 @@ fun FaceRecognitionScreen(
                 if (currentTime - lastEventTime >= 1000L) {
                     // Get the light sensor Lux value
                     luxValue = event?.values?.get(0) ?: 0f
+
+                    Log.d("zzzzz camera", luxValue.toString())
 
                     lastEventTime = currentTime
                     // Do something with the light sensor Lux value
@@ -87,7 +92,6 @@ fun FaceRecognitionScreen(
         startSession(viewModel)
         onDispose {
             sensorManager.unregisterListener(sensorListener)
-            endSession(navController, viewModel)
         }
     }
 
@@ -107,7 +111,9 @@ fun FaceRecognitionScreen(
 
         Button(
             onClick = {
-                endSession(navController, viewModel)
+                if (viewModel.inSession) {
+                    endSession(navController, viewModel)
+                }
             },
             modifier = Modifier.align(Alignment.BottomCenter)
         ) {
@@ -118,6 +124,7 @@ fun FaceRecognitionScreen(
 
 fun startSession(viewModel: MyViewModel) {
     viewModel.startSession()
+
 }
 
 private fun endSession(
