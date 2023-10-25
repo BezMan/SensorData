@@ -7,7 +7,7 @@ interface FileWriter {
     suspend fun writeFile(byteArray: ByteArray): Resource<String>
 
     companion object{
-        const val FILE_NAME = "FileExportApp"
+        const val FILE_NAME = "bioeye"
     }
 
 }

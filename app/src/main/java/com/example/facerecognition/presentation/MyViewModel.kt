@@ -81,6 +81,9 @@ class MyViewModel @Inject constructor(
                 }
 
                 is Resource.Loading -> {
+
+//                    delay(1000)
+
                     pathInfo.data?.let {
                         fileExportState = fileExportState.copy(
                             generatingProgress = pathInfo.data.progressPercentage

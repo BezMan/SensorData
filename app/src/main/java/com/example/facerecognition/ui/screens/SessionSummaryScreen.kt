@@ -1,23 +1,31 @@
 package com.example.facerecognition.ui.screens
 
+import android.content.Context
 import android.content.Intent
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.Dialog
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import com.example.facerecognition.domain.model.ExportModel
+import com.example.facerecognition.presentation.FileExportState
 import com.example.facerecognition.presentation.MyViewModel
+import com.example.facerecognition.ui.theme.Pink80
 import com.example.facerecognition.utils.MyUtils
 import java.io.File
 
@@ -30,23 +38,9 @@ fun SessionSummaryScreen(
     val fileExportState = viewModel.fileExportState
     val context = LocalContext.current
 
-    LaunchedEffect(key1 = fileExportState){
-        if(fileExportState.isShareDataClicked){
-            val uri = FileProvider.getUriForFile(
-                context,
-                context.applicationContext.packageName+".provider",
-                File(fileExportState.shareDataUri!!)
-            )
-            val intent = Intent(Intent.ACTION_SEND)
-            intent.type = "text/csv"
-            intent.putExtra(Intent.EXTRA_SUBJECT,"My Export Data")
-            intent.putExtra(Intent.EXTRA_STREAM,uri)
-
-            val chooser = Intent.createChooser(intent,"Share With")
-            ContextCompat.startActivity(
-                context,chooser,null
-            )
-            viewModel.onShareDataOpen()
+    LaunchedEffect(key1 = fileExportState) {
+        if (fileExportState.isShareDataClicked) {
+            openShareIntentChooser(context, fileExportState, viewModel)
         }
     }
 
@@ -78,6 +72,57 @@ fun SessionSummaryScreen(
             ) {
                 Text(text = "Share CSV")
             }
+        }
+    }
+    if (fileExportState.isGeneratingLoading) {
+        LoadingComposable(fileExportState)
+    }
+
+}
+
+
+private fun openShareIntentChooser(
+    context: Context,
+    fileExportState: FileExportState,
+    viewModel: MyViewModel
+) {
+    val uri = FileProvider.getUriForFile(
+        context,
+        context.applicationContext.packageName + ".provider",
+        File(fileExportState.shareDataUri!!)
+    )
+    val intent = Intent(Intent.ACTION_SEND)
+    intent.type = "text/csv"
+    intent.putExtra(Intent.EXTRA_SUBJECT, "My Export Data")
+    intent.putExtra(Intent.EXTRA_STREAM, uri)
+
+    val chooser = Intent.createChooser(intent, "Share With")
+    ContextCompat.startActivity(
+        context, chooser, null
+    )
+    viewModel.onShareDataOpen()
+}
+
+@Composable
+private fun LoadingComposable(fileExportState: FileExportState) {
+    Dialog(
+        onDismissRequest = {}
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth(),
+            verticalArrangement = Arrangement.spacedBy(15.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            CircularProgressIndicator(
+                color = Pink80
+            )
+            Text(
+                "Generating File (${fileExportState.generatingProgress}%) ...",
+                color = Pink80,
+                style = MaterialTheme.typography.headlineMedium,
+                fontWeight = FontWeight.Medium
+            )
         }
     }
 }

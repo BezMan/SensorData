@@ -3,11 +3,10 @@ package com.example.facerecognition.data.file
 import android.content.Context
 import android.net.Uri
 import com.example.facerecognition.core.Resource
+import com.example.facerecognition.utils.DateTimeUtils
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
-import java.text.SimpleDateFormat
-import java.util.Calendar
 import javax.inject.Inject
 
 class AndroidInternalStorageFileWriter @Inject constructor(
@@ -16,9 +15,7 @@ class AndroidInternalStorageFileWriter @Inject constructor(
 
 
     override suspend fun writeFile(byteArray: ByteArray): Resource<String> {
-        val dateTime = Calendar.getInstance().time
-        val formatter = SimpleDateFormat("yyyy-MM-dd_HH:mm:ss")
-        return saveFile(byteArray, FileWriter.FILE_NAME+"_"+formatter.format(dateTime))
+        return saveFile(byteArray, FileWriter.FILE_NAME+"-"+DateTimeUtils.fileNameFormatToString())
     }
 
     private fun saveFile(byteArray: ByteArray, fileName:String): Resource<String> {

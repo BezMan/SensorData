@@ -4,6 +4,8 @@ import com.example.facerecognition.core.Resource
 import com.example.facerecognition.domain.model.ExportModel
 import com.example.facerecognition.data.converter.DataConverter
 import com.example.facerecognition.data.converter.GenerateInfo
+import com.example.facerecognition.utils.DateTimeUtils
+import com.example.facerecognition.utils.MyUtils
 import com.opencsv.CSVWriter
 import com.opencsv.CSVWriterBuilder
 import com.opencsv.ICSVWriter
@@ -37,8 +39,8 @@ class DataConverterCSV : DataConverter {
         exportDataList.forEach { exportModel ->
             csvWriter.writeNext(
                 arrayOf(
-                    "${exportModel.sensorData}",
-                    "${exportModel.time}"
+                    DateTimeUtils.timestampFormatToString(exportModel.time),
+                    "${MyUtils.isLightInRange(exportModel.sensorData)}"
                 )
             )
             alreadyConvertedValues += 1
@@ -64,6 +66,6 @@ class DataConverterCSV : DataConverter {
 
     companion object{
         const val SEPARATOR = ';'
-        val HEADER_DATA = arrayOf("sensor_data","time")
+        val HEADER_DATA = arrayOf("timestamp","is_face_detected")
     }
 }
