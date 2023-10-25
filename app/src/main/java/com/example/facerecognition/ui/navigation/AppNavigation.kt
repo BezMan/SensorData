@@ -40,14 +40,11 @@ fun AppNavigation() {
         }
         composable(Screen.SessionSummary.route) {
             SessionSummaryScreen(
-                sessionData = myViewModel.getDataList(),
-                onDoneClicked = {
-                    navController.navigate(Screen.Welcome.route) {
-                        popUpTo(Screen.Welcome.route) { inclusive = true }
-                    }
-                }
+                myViewModel
             ) {
-                // Implement CSV sharing logic here
+                navController.navigate(Screen.Welcome.route) {
+                    popUpTo(Screen.Welcome.route) { inclusive = true }
+                }
             }
         }
     }

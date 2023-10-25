@@ -9,9 +9,14 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.example.facerecognition.core.Resource
 import com.example.facerecognition.domain.model.ExportModel
 import com.example.facerecognition.domain.repository.ExportRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import javax.inject.Inject
 
 @HiltViewModel
@@ -28,7 +33,7 @@ class MyViewModel @Inject constructor(
         exportModelList.add(exportModel)
     }
 
-    fun getDataList() : List<ExportModel> {
+    fun getDataList(): List<ExportModel> {
         return exportModelList
     }
 
@@ -52,8 +57,54 @@ class MyViewModel @Inject constructor(
     }
 
 
-    fun shareCsv() {
-        // Generate and share the CSV file.
+    var fileExportState by mutableStateOf(FileExportState())
+        private set
+
+    private var collectingJob: Job? = null
+
+    fun generateExportFile() {
+        collectingJob?.cancel()
+        fileExportState = fileExportState.copy(isGeneratingLoading = true)
+        repository.startExportData(
+            exportModelList.toList()
+        ).onEach { pathInfo ->
+            when (pathInfo) {
+                is Resource.Success -> {
+                    fileExportState = fileExportState.copy(
+                        isSharedDataReady = true,
+                        isGeneratingLoading = false,
+                        shareDataUri = pathInfo.data.path,
+                        generatingProgress = 100
+                    )
+                    onShareDataClick()
+
+                }
+
+                is Resource.Loading -> {
+                    pathInfo.data?.let {
+                        fileExportState = fileExportState.copy(
+                            generatingProgress = pathInfo.data.progressPercentage
+                        )
+                    }
+                }
+
+                is Resource.Error -> {
+                    fileExportState = fileExportState.copy(
+                        failedGenerating = true,
+                        isGeneratingLoading = false
+                    )
+                }
+            }
+        }.launchIn(viewModelScope)
+    }
+
+
+    fun onShareDataClick() {
+        fileExportState = fileExportState.copy(isShareDataClicked = true)
+    }
+
+    fun onShareDataOpen() {
+        fileExportState = fileExportState.copy(isShareDataClicked = false)
     }
 
     private val REQUIRED_PERMISSIONS = arrayOf(
