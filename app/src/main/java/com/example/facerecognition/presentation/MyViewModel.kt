@@ -6,7 +6,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.facerecognition.core.Resource
+import com.example.facerecognition.domain.Resource
 import com.example.facerecognition.domain.model.ExportModel
 import com.example.facerecognition.domain.repository.IRepository
 import com.example.facerecognition.utils.PermissionManager
@@ -56,20 +56,20 @@ class MyViewModel @Inject constructor(
     }
 
 
-    var fileExportState by mutableStateOf(FileExportState())
+    var fileExportUiState by mutableStateOf(FileExportUiState())
         private set
 
     private var collectingJob: Job? = null
 
     fun generateExportFile() {
         collectingJob?.cancel()
-        fileExportState = fileExportState.copy(isGeneratingLoading = true)
+        fileExportUiState = fileExportUiState.copy(isGeneratingLoading = true)
         repository.startExportData(
             exportModelList.toList()
         ).onEach { pathInfo ->
             when (pathInfo) {
                 is Resource.Success -> {
-                    fileExportState = fileExportState.copy(
+                    fileExportUiState = fileExportUiState.copy(
                         isSharedDataReady = true,
                         isGeneratingLoading = false,
                         shareDataUri = pathInfo.data.path,
@@ -84,14 +84,14 @@ class MyViewModel @Inject constructor(
                     delay(300)
 
                     pathInfo.data?.let {
-                        fileExportState = fileExportState.copy(
+                        fileExportUiState = fileExportUiState.copy(
                             generatingProgress = pathInfo.data.progressPercentage
                         )
                     }
                 }
 
                 is Resource.Error -> {
-                    fileExportState = fileExportState.copy(
+                    fileExportUiState = fileExportUiState.copy(
                         failedGenerating = true,
                         isGeneratingLoading = false
                     )
@@ -102,11 +102,11 @@ class MyViewModel @Inject constructor(
 
 
     fun onShareDataClick() {
-        fileExportState = fileExportState.copy(isShareDataClicked = true)
+        fileExportUiState = fileExportUiState.copy(isShareDataClicked = true)
     }
 
     fun onShareDataOpen() {
-        fileExportState = fileExportState.copy(isShareDataClicked = false)
+        fileExportUiState = fileExportUiState.copy(isShareDataClicked = false)
     }
 
     fun areAllPermissionsGranted(): Boolean {

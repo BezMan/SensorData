@@ -25,27 +25,13 @@ fun AppNavigation() {
             WelcomeScreen(navController, myViewModel)
         }
         composable(Screen.LightSensor.route) {
-            LightSensorScreen {
-                // Callback for "Try Again" button
-                navController.navigate(Screen.Welcome.route) {
-                    popUpTo(Screen.Welcome.route) { inclusive = true }
-                }
-            }
+            LightSensorScreen(navController)
         }
         composable(Screen.FaceRecognition.route) {
-            FaceRecognitionScreen(
-                navController,
-                myViewModel
-            )
+            FaceRecognitionScreen(navController, myViewModel)
         }
         composable(Screen.SessionSummary.route) {
-            SessionSummaryScreen(
-                myViewModel
-            ) {
-                navController.navigate(Screen.Welcome.route) {
-                    popUpTo(Screen.Welcome.route) { inclusive = true }
-                }
-            }
+            SessionSummaryScreen(navController, myViewModel)
         }
     }
 }

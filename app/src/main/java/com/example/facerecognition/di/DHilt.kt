@@ -2,8 +2,8 @@ package com.example.facerecognition.di
 
 import android.app.Application
 import androidx.lifecycle.ViewModel
-import com.example.facerecognition.data.converter.IDataConverter
-import com.example.facerecognition.data.converter.csv.DataConverterCSVImpl
+import com.example.facerecognition.data.csv.IDataConverter
+import com.example.facerecognition.data.csv.DataConverterCSVImpl
 import com.example.facerecognition.data.file.FileWriterImpl
 import com.example.facerecognition.data.file.IFileWriter
 import com.example.facerecognition.data.repository.RepositoryImpl

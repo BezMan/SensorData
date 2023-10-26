@@ -22,20 +22,20 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
+import androidx.navigation.NavController
 import com.example.facerecognition.domain.model.ExportModel
-import com.example.facerecognition.presentation.FileExportState
+import com.example.facerecognition.presentation.FileExportUiState
 import com.example.facerecognition.presentation.MyViewModel
+import com.example.facerecognition.ui.navigation.Screen
 import com.example.facerecognition.ui.theme.Pink80
 import com.example.facerecognition.utils.SensorUtils
 import java.io.File
 
 @Composable
-fun SessionSummaryScreen(
-    viewModel: MyViewModel,
-    onDoneClicked: () -> Unit
-) {
+fun SessionSummaryScreen(navController: NavController, viewModel: MyViewModel) {
+
     val dataList = viewModel.getDataList()
-    val fileExportState = viewModel.fileExportState
+    val fileExportState = viewModel.fileExportUiState
     val context = LocalContext.current
 
     LaunchedEffect(key1 = fileExportState) {
@@ -60,7 +60,7 @@ fun SessionSummaryScreen(
             Text(text = "Face Not Detected Duration: ${calculateFaceNotDetectedDuration(dataList)}")
 
             Button(
-                onClick = { onDoneClicked() },
+                onClick = { onDoneClicked(navController) },
                 modifier = Modifier.padding(16.dp)
             ) {
                 Text(text = "Done")
@@ -80,16 +80,23 @@ fun SessionSummaryScreen(
 
 }
 
+fun onDoneClicked(navController: NavController) {
+    navController.navigate(Screen.Welcome.route) {
+        popUpTo(Screen.Welcome.route) { inclusive = true }
+    }
+
+}
+
 
 private fun openShareIntentChooser(
     context: Context,
-    fileExportState: FileExportState,
+    fileExportUiState: FileExportUiState,
     viewModel: MyViewModel
 ) {
     val uri = FileProvider.getUriForFile(
         context,
         context.applicationContext.packageName + ".provider",
-        File(fileExportState.shareDataUri!!)
+        File(fileExportUiState.shareDataUri!!)
     )
     val intent = Intent(Intent.ACTION_SEND)
     intent.type = "text/csv"
@@ -104,7 +111,7 @@ private fun openShareIntentChooser(
 }
 
 @Composable
-private fun LoadingComposable(fileExportState: FileExportState) {
+private fun LoadingComposable(fileExportUiState: FileExportUiState) {
     Dialog(
         onDismissRequest = {}
     ) {
@@ -118,7 +125,7 @@ private fun LoadingComposable(fileExportState: FileExportState) {
                 color = Pink80
             )
             Text(
-                "Generating File (${fileExportState.generatingProgress}%) ...",
+                "Generating File (${fileExportUiState.generatingProgress}%) ...",
                 color = Pink80,
                 style = MaterialTheme.typography.headlineMedium,
                 fontWeight = FontWeight.Medium

@@ -1,7 +1,7 @@
 package com.example.facerecognition.data.repository
 
-import com.example.facerecognition.core.Resource
-import com.example.facerecognition.data.converter.IDataConverter
+import com.example.facerecognition.domain.Resource
+import com.example.facerecognition.data.csv.IDataConverter
 import com.example.facerecognition.data.file.IFileWriter
 import com.example.facerecognition.domain.model.ExportModel
 import com.example.facerecognition.domain.model.PathInfo

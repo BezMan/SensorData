@@ -2,7 +2,7 @@ package com.example.facerecognition.data.file
 
 import android.content.Context
 import android.net.Uri
-import com.example.facerecognition.core.Resource
+import com.example.facerecognition.domain.Resource
 import com.example.facerecognition.utils.DateTimeUtils
 import java.io.File
 import java.io.FileOutputStream

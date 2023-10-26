@@ -1,6 +1,6 @@
 package com.example.facerecognition.presentation
 
-data class FileExportState(
+data class FileExportUiState(
     val isGeneratingLoading:Boolean = false,
     val isShareDataClicked:Boolean = false,
     val isSharedDataReady:Boolean = false,

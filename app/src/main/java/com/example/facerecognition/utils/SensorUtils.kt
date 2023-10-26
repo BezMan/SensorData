@@ -2,7 +2,6 @@ package com.example.facerecognition.utils
 
 class SensorUtils {
 
-
     companion object {
 
         private const val MIN_LIGHT = 20f

@@ -11,11 +11,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
+import com.example.facerecognition.ui.navigation.Screen
 
 @Composable
-fun LightSensorScreen(
-    onTryAgain: () -> Unit
-) {
+fun LightSensorScreen(navController: NavController) {
     Box(
         modifier = Modifier.fillMaxSize(),
         contentAlignment = Alignment.Center
@@ -27,7 +27,9 @@ fun LightSensorScreen(
         ) {
             Text(text = "The room is too bright/dark")
             Button(
-                onClick = { onTryAgain() },
+                onClick = {
+                    onTryAgainClicked(navController)
+                },
                 modifier = Modifier.padding(16.dp)
             ) {
                 Text(text = "Try Again")
@@ -35,4 +37,10 @@ fun LightSensorScreen(
         }
     }
 
+}
+
+private fun onTryAgainClicked(navController: NavController) {
+    navController.navigate(Screen.Welcome.route) {
+        popUpTo(Screen.Welcome.route) { inclusive = true }
+    }
 }

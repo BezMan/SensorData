@@ -1,8 +1,6 @@
-package com.example.facerecognition.data.converter.csv
+package com.example.facerecognition.data.csv
 
-import com.example.facerecognition.core.Resource
-import com.example.facerecognition.data.converter.GenerateInfo
-import com.example.facerecognition.data.converter.IDataConverter
+import com.example.facerecognition.domain.Resource
 import com.example.facerecognition.domain.model.ExportModel
 import com.example.facerecognition.utils.DateTimeUtils
 import com.example.facerecognition.utils.SensorUtils

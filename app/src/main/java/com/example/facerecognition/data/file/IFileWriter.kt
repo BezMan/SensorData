@@ -1,6 +1,6 @@
 package com.example.facerecognition.data.file
 
-import com.example.facerecognition.core.Resource
+import com.example.facerecognition.domain.Resource
 
 interface IFileWriter {
 
