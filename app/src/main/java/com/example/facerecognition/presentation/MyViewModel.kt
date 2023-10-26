@@ -83,7 +83,7 @@ class MyViewModel @Inject constructor(
 
                 is Resource.Loading -> {
 
-                    delay(1000)
+                    delay(300)
 
                     pathInfo.data?.let {
                         fileExportState = fileExportState.copy(

@@ -1,22 +1,24 @@
 package com.example.facerecognition.data.converter.csv
 
 import com.example.facerecognition.core.Resource
-import com.example.facerecognition.domain.model.ExportModel
-import com.example.facerecognition.data.converter.IDataConverter
 import com.example.facerecognition.data.converter.GenerateInfo
+import com.example.facerecognition.data.converter.IDataConverter
+import com.example.facerecognition.domain.model.ExportModel
 import com.example.facerecognition.utils.DateTimeUtils
 import com.example.facerecognition.utils.SensorUtils
 import com.opencsv.CSVWriter
 import com.opencsv.CSVWriterBuilder
 import com.opencsv.ICSVWriter
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOn
 import java.io.StringWriter
 import java.io.Writer
 
 class DataConverterCSVImpl : IDataConverter {
 
-    private fun getCSVWriter(writer: Writer):ICSVWriter{
+    private fun getCSVWriter(writer: Writer): ICSVWriter {
         return CSVWriterBuilder(writer)
             .withSeparator(SEPARATOR)
             .withQuoteChar(CSVWriter.NO_QUOTE_CHARACTER)
@@ -32,7 +34,6 @@ class DataConverterCSVImpl : IDataConverter {
         emit(Resource.Loading(GenerateInfo()))
         val writer = StringWriter()
         val csvWriter = getCSVWriter(writer)
-        val valuesForOnePercent = (exportDataList.size / 100)+1
         var alreadyConvertedValues = 0
         csvWriter.writeNext(HEADER_DATA)
 
@@ -44,28 +45,26 @@ class DataConverterCSVImpl : IDataConverter {
                 )
             )
             alreadyConvertedValues += 1
-            if(alreadyConvertedValues%valuesForOnePercent == 0){
-                emit(
-                    Resource.Loading(
-                        GenerateInfo(
-                    progressPercentage = alreadyConvertedValues/valuesForOnePercent
-                )
-                    ))
-            }
+            // Calculate progressPercentage based on alreadyConvertedValues and exportDataList.size
+            val progressPercentage = (alreadyConvertedValues * 100) / exportDataList.size
+
+            emit(Resource.Loading(GenerateInfo(progressPercentage = progressPercentage)))
         }
         emit(
             Resource.Success(
-            GenerateInfo(
-                byteArray = String(writer.buffer).toByteArray(),
-                progressPercentage = 100
+                GenerateInfo(
+                    byteArray = String(writer.buffer).toByteArray(),
+                    progressPercentage = 100
+                )
             )
-        ))
+        )
         csvWriter.close()
         writer.close()
     }
+        .flowOn(Dispatchers.IO)
 
-    companion object{
+    companion object {
         const val SEPARATOR = ';'
-        val HEADER_DATA = arrayOf("timestamp","is_face_detected")
+        val HEADER_DATA = arrayOf("timestamp", "is_face_detected")
     }
 }
