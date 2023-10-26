@@ -29,7 +29,7 @@ class MyViewModel @Inject constructor(
     var inSession by mutableStateOf(false)
         private set
 
-    var fileExportUiState by mutableStateOf(FileExportUiState())
+    var fileExportState by mutableStateOf(FileExportState())
         private set
 
     private var collectingJob: Job? = null
@@ -61,11 +61,11 @@ class MyViewModel @Inject constructor(
 
 
     fun onShareDataClick() {
-        fileExportUiState = fileExportUiState.copy(isShareDataClicked = true)
+        fileExportState = fileExportState.copy(isShareDataClicked = true)
     }
 
     fun onShareDataOpen() {
-        fileExportUiState = fileExportUiState.copy(isShareDataClicked = false)
+        fileExportState = fileExportState.copy(isShareDataClicked = false)
     }
 
     fun generateExportFile() {
@@ -74,19 +74,18 @@ class MyViewModel @Inject constructor(
 
         collectingJob = viewModelScope.launch {
 
-            fileExportUiState = fileExportUiState.copy(
+            fileExportState = fileExportState.copy(
                 isGeneratingLoading = true
             )
 
             repository.startExportData(
                 exportModelList.toList()
-            ).onEach { pathInfo ->
-                when (pathInfo) {
+            ).onEach { fileExportState ->
+                when (fileExportState) {
                     is Resource.Success -> {
-                        fileExportUiState = fileExportUiState.copy(
-                            isSharedDataReady = true,
+                        this@MyViewModel.fileExportState = this@MyViewModel.fileExportState.copy(
                             isGeneratingLoading = false,
-                            shareDataUri = pathInfo.data.path,
+                            shareDataUri = fileExportState.data.path,
                             generatingProgress = 100
                         )
                         onShareDataClick()
@@ -95,17 +94,18 @@ class MyViewModel @Inject constructor(
 
                     is Resource.Loading -> {
 
+                        //delay for viewing the LOADING
                         delay(300)
 
-                        pathInfo.data?.let {
-                            fileExportUiState = fileExportUiState.copy(
-                                generatingProgress = pathInfo.data.progressPercentage
+                        fileExportState.data?.let {
+                            this@MyViewModel.fileExportState = this@MyViewModel.fileExportState.copy(
+                                generatingProgress = fileExportState.data.progressPercentage
                             )
                         }
                     }
 
                     is Resource.Error -> {
-                        fileExportUiState = fileExportUiState.copy(
+                        this@MyViewModel.fileExportState = this@MyViewModel.fileExportState.copy(
                             isGeneratingLoading = false
                         )
                     }

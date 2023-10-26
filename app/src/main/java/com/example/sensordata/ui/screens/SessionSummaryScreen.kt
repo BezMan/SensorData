@@ -24,7 +24,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import androidx.navigation.NavController
 import com.example.sensordata.domain.model.ExportModel
-import com.example.sensordata.presentation.FileExportUiState
+import com.example.sensordata.presentation.FileExportState
 import com.example.sensordata.presentation.MyViewModel
 import com.example.sensordata.ui.navigation.Screen
 import com.example.sensordata.ui.theme.Pink80
@@ -35,7 +35,7 @@ import java.io.File
 fun SessionSummaryScreen(navController: NavController, viewModel: MyViewModel) {
 
     val dataList = viewModel.getDataList()
-    val fileExportState = viewModel.fileExportUiState
+    val fileExportState = viewModel.fileExportState
     val context = LocalContext.current
 
     LaunchedEffect(key1 = fileExportState) {
@@ -90,13 +90,13 @@ fun onDoneClicked(navController: NavController) {
 
 private fun openShareIntentChooser(
     context: Context,
-    fileExportUiState: FileExportUiState,
+    fileExportState: FileExportState,
     viewModel: MyViewModel
 ) {
     val uri = FileProvider.getUriForFile(
         context,
         context.applicationContext.packageName + ".provider",
-        File(fileExportUiState.shareDataUri!!)
+        File(fileExportState.shareDataUri!!)
     )
     val intent = Intent(Intent.ACTION_SEND)
     intent.type = "text/csv"
@@ -111,7 +111,7 @@ private fun openShareIntentChooser(
 }
 
 @Composable
-private fun LoadingComposable(fileExportUiState: FileExportUiState) {
+private fun LoadingComposable(fileExportState: FileExportState) {
     Dialog(
         onDismissRequest = {}
     ) {
@@ -125,7 +125,7 @@ private fun LoadingComposable(fileExportUiState: FileExportUiState) {
                 color = Pink80
             )
             Text(
-                "Generating File (${fileExportUiState.generatingProgress}%) ...",
+                "Generating File (${fileExportState.generatingProgress}%) ...",
                 color = Pink80,
                 style = MaterialTheme.typography.headlineMedium,
                 fontWeight = FontWeight.Medium
