@@ -1,18 +1,15 @@
 package com.example.facerecognition.presentation
 
-import android.Manifest
-import android.content.Context
-import android.content.pm.PackageManager
 import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.facerecognition.core.Resource
 import com.example.facerecognition.domain.model.ExportModel
 import com.example.facerecognition.domain.repository.IRepository
+import com.example.facerecognition.utils.PermissionManager
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -22,7 +19,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class MyViewModel @Inject constructor(
-    private val repository: IRepository
+    private val repository: IRepository,
+    private val permissionManager: PermissionManager
 ) : ViewModel() {
 
     private val listLimit = 30
@@ -111,29 +109,13 @@ class MyViewModel @Inject constructor(
         fileExportState = fileExportState.copy(isShareDataClicked = false)
     }
 
-    private val REQUIRED_PERMISSIONS = arrayOf(
-        Manifest.permission.CAMERA,
-        // Add other necessary permissions here
-    )
-
-
-    fun areAllPermissionsGranted(context: Context): Boolean {
-        for (permission in REQUIRED_PERMISSIONS) {
-            if (ContextCompat.checkSelfPermission(
-                    context,
-                    permission
-                ) != PackageManager.PERMISSION_GRANTED
-            ) {
-                return false
-            }
-        }
-        return true
+    fun areAllPermissionsGranted(): Boolean {
+        return permissionManager.areAllPermissionsGranted()
     }
-
 
     fun requestPermissions(
         activityResultLauncher: ManagedActivityResultLauncher<Array<String>, Map<String, Boolean>>
     ) {
-        activityResultLauncher.launch(REQUIRED_PERMISSIONS)
+        permissionManager.requestPermissions(activityResultLauncher)
     }
 }

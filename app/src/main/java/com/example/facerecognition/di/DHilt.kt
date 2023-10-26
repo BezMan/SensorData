@@ -9,6 +9,7 @@ import com.example.facerecognition.data.file.IFileWriter
 import com.example.facerecognition.data.repository.RepositoryImpl
 import com.example.facerecognition.domain.repository.IRepository
 import com.example.facerecognition.presentation.MyViewModel
+import com.example.facerecognition.utils.PermissionManager
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -24,8 +25,8 @@ object VMModule {
 
     @Provides
     @ViewModelScoped
-    fun provideVM(repository: IRepository): ViewModel {
-        return MyViewModel(repository)
+    fun provideVM(repository: IRepository, permissionManager: PermissionManager): ViewModel {
+        return MyViewModel(repository, permissionManager)
     }
 
     @Provides
@@ -38,6 +39,13 @@ object VMModule {
     }
 
     @Provides
+    @ViewModelScoped
+    fun providePermissionManager(context: Application): PermissionManager{
+        return PermissionManager(context)
+    }
+
+
+        @Provides
     @ViewModelScoped
     fun provideDataConverter(): IDataConverter {
         return DataConverterCSVImpl()

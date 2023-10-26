@@ -54,7 +54,7 @@ fun WelcomeScreen(navController: NavController, viewModel: MyViewModel) {
             Button(
                 onClick = {
                     // Check if all required permissions are granted
-                    if (viewModel.areAllPermissionsGranted(context)
+                    if (viewModel.areAllPermissionsGranted()
                     // Implement your logic here
 
                     ) {
