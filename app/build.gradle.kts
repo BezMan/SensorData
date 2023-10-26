@@ -56,9 +56,9 @@ android {
 
 dependencies {
 
-    implementation("androidx.core:core-ktx:1.9.0")
+    implementation("androidx.core:core-ktx:1.12.0")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.6.2")
-    implementation("androidx.activity:activity-compose:1.7.2")
+    implementation("androidx.activity:activity-compose:1.8.0")
     implementation(platform("androidx.compose:compose-bom:2023.03.00"))
     implementation("androidx.compose.ui:ui")
     implementation("androidx.compose.ui:ui-graphics")
@@ -86,7 +86,7 @@ dependencies {
     implementation("androidx.hilt:hilt-navigation-compose:1.0.0")
 
     // Face features
-    implementation("com.google.mlkit:face-detection:16.1.5")
+//    implementation("com.google.mlkit:face-detection:16.1.5")
 
     // CameraX core library using the camera2 implementation
     val camerax_version = "1.4.0-alpha02"
@@ -99,12 +99,12 @@ dependencies {
     implementation("androidx.camera:camera-video:${camerax_version}")
     // If you want to additionally use the CameraX View class
     implementation("androidx.camera:camera-view:${camerax_version}")
-    // If you want to additionally add CameraX ML Kit Vision Integration
-    implementation("androidx.camera:camera-mlkit-vision:${camerax_version}")
-    // If you want to additionally use the CameraX Extensions library
-    implementation("androidx.camera:camera-extensions:${camerax_version}")
+//    // If you want to additionally add CameraX ML Kit Vision Integration
+//    implementation("androidx.camera:camera-mlkit-vision:${camerax_version}")
+//    // If you want to additionally use the CameraX Extensions library
+//    implementation("androidx.camera:camera-extensions:${camerax_version}")
 
 
-    implementation("com.opencsv:opencsv:4.6")
+    implementation("com.opencsv:opencsv:5.7.0")
 
 }
