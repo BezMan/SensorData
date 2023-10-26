@@ -50,7 +50,7 @@ fun WelcomeScreen(navController: NavController, viewModel: MyViewModel) {
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
-            Text(text = "Welcome to Face Recognition App")
+            Text(text = "Welcome to Sensor Capture App")
             Button(
                 onClick = {
                     // Check if all required permissions are granted
@@ -76,10 +76,10 @@ fun WelcomeScreen(navController: NavController, viewModel: MyViewModel) {
                                 if (SensorUtils.isLightInRange(luxValue)) {
 
                                     // Navigate to the appropriate screen when light conditions are suitable
-                                    navController.navigate(Screen.FaceRecognition.route)
+                                    navController.navigate(Screen.CaptureSensorData.route)
                                 } else {
                                     // Navigate to the "LightSensorScreen" when light conditions are not suitable
-                                    navController.navigate(Screen.LightSensor.route)
+                                    navController.navigate(Screen.CheckCondition.route)
                                 }
                             }
 

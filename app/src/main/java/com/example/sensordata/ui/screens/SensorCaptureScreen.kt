@@ -31,7 +31,7 @@ import com.example.sensordata.presentation.MyViewModel
 import com.example.sensordata.ui.navigation.Screen
 
 @Composable
-fun FaceRecognitionScreen(
+fun SensorCaptureScreen(
     navController: NavController,
     viewModel: MyViewModel
 ) {
