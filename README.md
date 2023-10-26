@@ -1,6 +1,7 @@
-# ReadMe
- written by Betzalel Silver. 
- Let's discuss further if I forgot to mention something. 
+
+ Written by Betzalel Silver. 
+I put emphasis on clean code, strong structure and scalable architecture. 
+
  
 # Flow
 welcome screen -> check if light conditions are good to move to capture screen -> capture light sensor data -> 
