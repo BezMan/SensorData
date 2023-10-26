@@ -2,12 +2,12 @@ package com.example.facerecognition.di
 
 import android.app.Application
 import androidx.lifecycle.ViewModel
-import com.example.facerecognition.data.converter.DataConverter
-import com.example.facerecognition.data.converter.csv.DataConverterCSV
-import com.example.facerecognition.data.file.AndroidInternalStorageFileWriter
-import com.example.facerecognition.data.file.FileWriter
-import com.example.facerecognition.data.repository.ExportRepositoryImpl
-import com.example.facerecognition.domain.repository.ExportRepository
+import com.example.facerecognition.data.converter.IDataConverter
+import com.example.facerecognition.data.converter.csv.DataConverterCSVImpl
+import com.example.facerecognition.data.file.FileWriterImpl
+import com.example.facerecognition.data.file.IFileWriter
+import com.example.facerecognition.data.repository.RepositoryImpl
+import com.example.facerecognition.domain.repository.IRepository
 import com.example.facerecognition.presentation.MyViewModel
 import dagger.Module
 import dagger.Provides
@@ -24,23 +24,23 @@ object VMModule {
 
     @Provides
     @ViewModelScoped
-    fun provideVM(repository: ExportRepository): ViewModel {
+    fun provideVM(repository: IRepository): ViewModel {
         return MyViewModel(repository)
     }
 
     @Provides
     @ViewModelScoped
     fun provideExportRepository(
-        fileWriter: FileWriter,
-        dataConverter: DataConverter
-    ): ExportRepository {
-        return ExportRepositoryImpl(fileWriter, dataConverter)
+        fileWriter: IFileWriter,
+        dataConverter: IDataConverter
+    ): IRepository {
+        return RepositoryImpl(fileWriter, dataConverter)
     }
 
     @Provides
     @ViewModelScoped
-    fun provideDataConverter(): DataConverter {
-        return DataConverterCSV()
+    fun provideDataConverter(): IDataConverter {
+        return DataConverterCSVImpl()
     }
 }
 
@@ -50,8 +50,8 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideFileWrite(context: Application): FileWriter {
-        return AndroidInternalStorageFileWriter(context)
+    fun provideFileWrite(context: Application): IFileWriter {
+        return FileWriterImpl(context)
     }
 
 }

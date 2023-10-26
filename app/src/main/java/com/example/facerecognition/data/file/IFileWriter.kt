@@ -2,7 +2,7 @@ package com.example.facerecognition.data.file
 
 import com.example.facerecognition.core.Resource
 
-interface FileWriter {
+interface IFileWriter {
 
     suspend fun writeFile(byteArray: ByteArray): Resource<String>
 

@@ -2,10 +2,10 @@ package com.example.facerecognition.data.converter.csv
 
 import com.example.facerecognition.core.Resource
 import com.example.facerecognition.domain.model.ExportModel
-import com.example.facerecognition.data.converter.DataConverter
+import com.example.facerecognition.data.converter.IDataConverter
 import com.example.facerecognition.data.converter.GenerateInfo
 import com.example.facerecognition.utils.DateTimeUtils
-import com.example.facerecognition.utils.MyUtils
+import com.example.facerecognition.utils.SensorUtils
 import com.opencsv.CSVWriter
 import com.opencsv.CSVWriterBuilder
 import com.opencsv.ICSVWriter
@@ -14,7 +14,7 @@ import kotlinx.coroutines.flow.flow
 import java.io.StringWriter
 import java.io.Writer
 
-class DataConverterCSV : DataConverter {
+class DataConverterCSVImpl : IDataConverter {
 
     private fun getCSVWriter(writer: Writer):ICSVWriter{
         return CSVWriterBuilder(writer)
@@ -40,7 +40,7 @@ class DataConverterCSV : DataConverter {
             csvWriter.writeNext(
                 arrayOf(
                     DateTimeUtils.timestampFormatToString(exportModel.time),
-                    "${MyUtils.isLightInRange(exportModel.sensorData)}"
+                    "${SensorUtils.isLightInRange(exportModel.sensorData)}"
                 )
             )
             alreadyConvertedValues += 1

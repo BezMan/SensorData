@@ -1,6 +1,6 @@
 package com.example.facerecognition.utils
 
-class MyUtils {
+class SensorUtils {
 
 
     companion object {

@@ -27,7 +27,6 @@ import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.navigation.NavController
 import com.example.facerecognition.domain.model.ExportModel
-import com.example.facerecognition.utils.MyUtils
 import com.example.facerecognition.presentation.MyViewModel
 import com.example.facerecognition.ui.navigation.Screen
 

@@ -24,7 +24,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.facerecognition.presentation.MyViewModel
 import com.example.facerecognition.ui.navigation.Screen
-import com.example.facerecognition.utils.MyUtils
+import com.example.facerecognition.utils.SensorUtils
 
 @Composable
 fun WelcomeScreen(navController: NavController, viewModel: MyViewModel) {
@@ -73,7 +73,7 @@ fun WelcomeScreen(navController: NavController, viewModel: MyViewModel) {
                                 sensorManager.unregisterListener(this)
 
                                 // Do something with the light sensor value
-                                if (MyUtils.isLightInRange(luxValue)) {
+                                if (SensorUtils.isLightInRange(luxValue)) {
 
                                     // Navigate to the appropriate screen when light conditions are suitable
                                     navController.navigate(Screen.FaceRecognition.route)

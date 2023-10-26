@@ -12,16 +12,17 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.facerecognition.core.Resource
 import com.example.facerecognition.domain.model.ExportModel
-import com.example.facerecognition.domain.repository.ExportRepository
+import com.example.facerecognition.domain.repository.IRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import javax.inject.Inject
 
 @HiltViewModel
 class MyViewModel @Inject constructor(
-    private val repository: ExportRepository
+    private val repository: IRepository
 ) : ViewModel() {
 
     private val listLimit = 30
@@ -82,7 +83,7 @@ class MyViewModel @Inject constructor(
 
                 is Resource.Loading -> {
 
-//                    delay(1000)
+                    delay(1000)
 
                     pathInfo.data?.let {
                         fileExportState = fileExportState.copy(

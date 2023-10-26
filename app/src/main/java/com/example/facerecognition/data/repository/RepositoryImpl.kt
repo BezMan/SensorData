@@ -1,21 +1,21 @@
 package com.example.facerecognition.data.repository
 
 import com.example.facerecognition.core.Resource
-import com.example.facerecognition.data.converter.DataConverter
-import com.example.facerecognition.data.file.FileWriter
+import com.example.facerecognition.data.converter.IDataConverter
+import com.example.facerecognition.data.file.IFileWriter
 import com.example.facerecognition.domain.model.ExportModel
 import com.example.facerecognition.domain.model.PathInfo
-import com.example.facerecognition.domain.repository.ExportRepository
+import com.example.facerecognition.domain.repository.IRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
-class ExportRepositoryImpl @Inject constructor(
-    private val fileWriter: FileWriter,
-    private val dataConverter: DataConverter
-): ExportRepository {
+class RepositoryImpl @Inject constructor(
+    private val fileWriter: IFileWriter,
+    private val dataConverter: IDataConverter
+): IRepository {
     override fun startExportData(
         exportList: List<ExportModel>
     ): Flow<Resource<PathInfo>> =

@@ -9,13 +9,13 @@ import java.io.FileOutputStream
 import java.io.IOException
 import javax.inject.Inject
 
-class AndroidInternalStorageFileWriter @Inject constructor(
+class FileWriterImpl @Inject constructor(
     private val context: Context
-): FileWriter {
+): IFileWriter {
 
 
     override suspend fun writeFile(byteArray: ByteArray): Resource<String> {
-        return saveFile(byteArray, FileWriter.FILE_NAME+"-"+DateTimeUtils.fileNameFormatToString())
+        return saveFile(byteArray, IFileWriter.FILE_NAME+"-"+DateTimeUtils.fileNameFormatToString())
     }
 
     private fun saveFile(byteArray: ByteArray, fileName:String): Resource<String> {

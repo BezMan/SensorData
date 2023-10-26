@@ -26,7 +26,7 @@ import com.example.facerecognition.domain.model.ExportModel
 import com.example.facerecognition.presentation.FileExportState
 import com.example.facerecognition.presentation.MyViewModel
 import com.example.facerecognition.ui.theme.Pink80
-import com.example.facerecognition.utils.MyUtils
+import com.example.facerecognition.utils.SensorUtils
 import java.io.File
 
 @Composable
@@ -139,10 +139,10 @@ fun calculateSessionDuration(sessionData: List<ExportModel>): String {
 
 fun calculateFaceDetectedDuration(sessionData: List<ExportModel>): String {
     // Implement the logic to calculate face detected duration
-    return sessionData.filter { MyUtils.isLightInRange(it.sensorData) }.size.toString()
+    return sessionData.filter { SensorUtils.isLightInRange(it.sensorData) }.size.toString()
 }
 
 fun calculateFaceNotDetectedDuration(sessionData: List<ExportModel>): String {
     // Implement the logic to calculate face not detected duration
-    return sessionData.filter { !MyUtils.isLightInRange(it.sensorData) }.size.toString()
+    return sessionData.filter { !SensorUtils.isLightInRange(it.sensorData) }.size.toString()
 }

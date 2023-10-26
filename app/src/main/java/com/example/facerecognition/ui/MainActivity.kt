@@ -1,4 +1,4 @@
-package com.example.facerecognition
+package com.example.facerecognition.ui
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -18,21 +18,3 @@ class MainActivity : ComponentActivity() {
         }
     }
 }
-
-
-
-//@Composable
-//fun Greeting(name: String, modifier: Modifier = Modifier) {
-//    Text(
-//        text = "Hello $name!",
-//        modifier = modifier
-//    )
-//}
-//
-//@Preview(showBackground = true)
-//@Composable
-//fun GreetingPreview() {
-//    FaceRecognitionTheme {
-//        Greeting("Android")
-//    }
-//}

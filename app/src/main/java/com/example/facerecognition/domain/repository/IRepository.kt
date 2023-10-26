@@ -5,7 +5,7 @@ import com.example.facerecognition.domain.model.ExportModel
 import com.example.facerecognition.domain.model.PathInfo
 import kotlinx.coroutines.flow.Flow
 
-interface ExportRepository {
+interface IRepository {
 
     fun startExportData(
         exportList:List<ExportModel>
