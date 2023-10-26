@@ -7,11 +7,11 @@ plugins {
 }
 
 android {
-    namespace = "com.example.facerecognition"
+    namespace = "com.example.sensordata"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "com.example.facerecognition"
+        applicationId = "com.example.sensordata"
         minSdk = 23
         targetSdk = 34
         versionCode = 1
