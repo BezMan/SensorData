@@ -92,7 +92,6 @@ class MyViewModel @Inject constructor(
 
                 is Resource.Error -> {
                     fileExportUiState = fileExportUiState.copy(
-                        failedGenerating = true,
                         isGeneratingLoading = false
                     )
                 }

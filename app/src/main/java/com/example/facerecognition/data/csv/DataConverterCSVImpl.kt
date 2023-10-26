@@ -2,6 +2,7 @@ package com.example.facerecognition.data.csv
 
 import com.example.facerecognition.domain.Resource
 import com.example.facerecognition.domain.model.ExportModel
+import com.example.facerecognition.domain.model.ExportFileInfo
 import com.example.facerecognition.utils.DateTimeUtils
 import com.example.facerecognition.utils.SensorUtils
 import com.opencsv.CSVWriter
@@ -28,8 +29,10 @@ class DataConverterCSVImpl : IDataConverter {
 
     override fun convertSensorData(
         exportDataList: List<ExportModel>
-    ): Flow<Resource<GenerateInfo>> = flow {
-        emit(Resource.Loading(GenerateInfo()))
+    ): Flow<Resource<ExportFileInfo>> = flow {
+
+        emit(Resource.Loading(ExportFileInfo()))
+
         val writer = StringWriter()
         val csvWriter = getCSVWriter(writer)
         var alreadyConvertedValues = 0
@@ -46,13 +49,12 @@ class DataConverterCSVImpl : IDataConverter {
             // Calculate progressPercentage based on alreadyConvertedValues and exportDataList.size
             val progressPercentage = (alreadyConvertedValues * 100) / exportDataList.size
 
-            emit(Resource.Loading(GenerateInfo(progressPercentage = progressPercentage)))
+            emit(Resource.Loading(ExportFileInfo(progressPercentage = progressPercentage)))
         }
         emit(
             Resource.Success(
-                GenerateInfo(
+                ExportFileInfo(
                     byteArray = String(writer.buffer).toByteArray(),
-                    progressPercentage = 100
                 )
             )
         )
