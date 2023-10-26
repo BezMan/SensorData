@@ -25,8 +25,8 @@ object VMModule {
 
     @Provides
     @ViewModelScoped
-    fun provideVM(repository: IRepository, permissionManager: PermissionManager): ViewModel {
-        return MyViewModel(repository, permissionManager)
+    fun provideVM(repository: IRepository): ViewModel {
+        return MyViewModel(repository)
     }
 
     @Provides
@@ -39,13 +39,6 @@ object VMModule {
     }
 
     @Provides
-    @ViewModelScoped
-    fun providePermissionManager(context: Application): PermissionManager{
-        return PermissionManager(context)
-    }
-
-
-        @Provides
     @ViewModelScoped
     fun provideDataConverter(): IDataConverter {
         return DataConverterCSVImpl()

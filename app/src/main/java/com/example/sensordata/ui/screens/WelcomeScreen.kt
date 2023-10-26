@@ -24,11 +24,15 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.sensordata.presentation.MyViewModel
 import com.example.sensordata.ui.navigation.Screen
+import com.example.sensordata.utils.PermissionManager
 import com.example.sensordata.utils.SensorUtils
 
 @Composable
 fun WelcomeScreen(navController: NavController, viewModel: MyViewModel) {
+
     val context = LocalContext.current
+
+    val permissionManager = PermissionManager(context)
 
     // Request camera permissions
     val activityResultLauncher = rememberLauncherForActivityResult(
@@ -54,7 +58,7 @@ fun WelcomeScreen(navController: NavController, viewModel: MyViewModel) {
             Button(
                 onClick = {
                     // Check if all required permissions are granted
-                    if (viewModel.areAllPermissionsGranted()
+                    if (permissionManager.areAllPermissionsGranted()
                     // Implement your logic here
 
                     ) {
@@ -91,7 +95,7 @@ fun WelcomeScreen(navController: NavController, viewModel: MyViewModel) {
                         sensorManager.registerListener(sensorListener, lightSensor, SensorManager.SENSOR_DELAY_NORMAL)
 
                     } else {
-                        viewModel.requestPermissions(activityResultLauncher)
+                        permissionManager.requestPermissions(activityResultLauncher)
                     }
                 },
                 modifier = Modifier.padding(16.dp)
