@@ -2,14 +2,11 @@ package com.example.sensordata.di
 
 import android.app.Application
 import androidx.lifecycle.ViewModel
-import com.example.sensordata.data.csv.IDataConverter
-import com.example.sensordata.data.csv.DataConverterCSVImpl
 import com.example.sensordata.data.file.FileWriterImpl
 import com.example.sensordata.data.file.IFileWriter
 import com.example.sensordata.data.repository.RepositoryImpl
 import com.example.sensordata.domain.repository.IRepository
 import com.example.sensordata.presentation.MyViewModel
-import com.example.sensordata.utils.PermissionManager
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -33,16 +30,10 @@ object VMModule {
     @ViewModelScoped
     fun provideExportRepository(
         fileWriter: IFileWriter,
-        dataConverter: IDataConverter
     ): IRepository {
-        return RepositoryImpl(fileWriter, dataConverter)
+        return RepositoryImpl(fileWriter)
     }
 
-    @Provides
-    @ViewModelScoped
-    fun provideDataConverter(): IDataConverter {
-        return DataConverterCSVImpl()
-    }
 }
 
 @Module
