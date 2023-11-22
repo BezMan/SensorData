@@ -40,7 +40,9 @@ fun WelcomeScreen(navController: NavController, viewModel: MyViewModel) {
     ) { permissions ->
         val permissionGranted = permissions.entries.all { it.value }
 
-        if (!permissionGranted) {
+        if (permissionGranted) {
+            checkSensorValue(context, navController)
+        } else {
             Toast.makeText(context, "Permission was denied", Toast.LENGTH_SHORT).show()
         }
     }
@@ -62,37 +64,7 @@ fun WelcomeScreen(navController: NavController, viewModel: MyViewModel) {
                     // Implement your logic here
 
                     ) {
-                        val sensorManager = context.getSystemService(Context.SENSOR_SERVICE) as SensorManager
-                        val lightSensor = sensorManager.getDefaultSensor(Sensor.TYPE_LIGHT)
-
-// Create a sensor listener to listen for changes in the light sensor value
-                        val sensorListener = object : SensorEventListener {
-                            override fun onSensorChanged(event: SensorEvent?) {
-                                // Get the light sensor Lux value
-                                val luxValue = event?.values?.get(0) ?: 0f
-
-                                Log.d("zzzzz welcome", luxValue.toString())
-
-                                // Unregister the sensor listener
-                                sensorManager.unregisterListener(this)
-
-                                // Do something with the light sensor value
-                                if (SensorUtils.isLightInRange(luxValue)) {
-
-                                    // Navigate to the appropriate screen when light conditions are suitable
-                                    navController.navigate(Screen.CaptureSensorData.route)
-                                } else {
-                                    // Navigate to the "LightSensorScreen" when light conditions are not suitable
-                                    navController.navigate(Screen.CheckCondition.route)
-                                }
-                            }
-
-                            override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {
-                                // Handle changes in the accuracy of the light sensor
-                            }
-                        }
-                        // Register the sensor listener
-                        sensorManager.registerListener(sensorListener, lightSensor, SensorManager.SENSOR_DELAY_NORMAL)
+                        checkSensorValue(context, navController)
 
                     } else {
                         permissionManager.requestPermissions(activityResultLauncher)
@@ -104,4 +76,41 @@ fun WelcomeScreen(navController: NavController, viewModel: MyViewModel) {
             }
         }
     }
+}
+
+private fun checkSensorValue(
+    context: Context,
+    navController: NavController
+) {
+    val sensorManager = context.getSystemService(Context.SENSOR_SERVICE) as SensorManager
+    val lightSensor = sensorManager.getDefaultSensor(Sensor.TYPE_LIGHT)
+
+// Create a sensor listener to listen for changes in the light sensor value
+    val sensorListener = object : SensorEventListener {
+        override fun onSensorChanged(event: SensorEvent?) {
+            // Get the light sensor Lux value
+            val luxValue = event?.values?.get(0) ?: 0f
+
+            Log.d("zzzzz welcome", luxValue.toString())
+
+            // Unregister the sensor listener
+            sensorManager.unregisterListener(this)
+
+            // Do something with the light sensor value
+            if (SensorUtils.isLightInRange(luxValue)) {
+
+                // Navigate to the appropriate screen when light conditions are suitable
+                navController.navigate(Screen.CaptureSensorData.route)
+            } else {
+                // Navigate to the "LightSensorScreen" when light conditions are not suitable
+                navController.navigate(Screen.CheckCondition.route)
+            }
+        }
+
+        override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {
+            // Handle changes in the accuracy of the light sensor
+        }
+    }
+    // Register the sensor listener
+    sensorManager.registerListener(sensorListener, lightSensor, SensorManager.SENSOR_DELAY_NORMAL)
 }
