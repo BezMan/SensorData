@@ -1,5 +1,6 @@
 package com.example.sensordata.data.csv
 
+import com.example.sensordata.data.file.IFileWriter
 import com.example.sensordata.domain.Resource
 import com.example.sensordata.domain.model.ExportModel
 import com.example.sensordata.domain.model.ExportFileInfo
@@ -28,38 +29,65 @@ class DataConverterCSVImpl : IDataConverter {
     }
 
     override fun convertSensorData(
-        exportDataList: List<ExportModel>
+        exportDataList: List<ExportModel>,
+        fileWriter: IFileWriter
     ): Flow<Resource<ExportFileInfo>> = flow {
-
-        emit(Resource.Loading(ExportFileInfo()))
-
         val writer = StringWriter()
         val csvWriter = getCSVWriter(writer)
-        var alreadyConvertedValues = 0
-        csvWriter.writeNext(HEADER_DATA)
 
-        exportDataList.forEach { exportModel ->
-            csvWriter.writeNext(
-                arrayOf(
-                    DateTimeUtils.fileNameFormatToString(exportModel.time),
-                    "${SensorUtils.isLightInRange(exportModel.sensorData)}"
+        try {
+            emit(Resource.Loading(ExportFileInfo()))
+
+            var alreadyConvertedValues = 0
+            csvWriter.writeNext(HEADER_DATA)
+
+            exportDataList.forEach { exportModel ->
+                csvWriter.writeNext(
+                    arrayOf(
+                        DateTimeUtils.fileNameFormatToString(exportModel.time),
+                        "${SensorUtils.isLightInRange(exportModel.sensorData)}"
+                    )
                 )
-            )
-            alreadyConvertedValues += 1
-            // Calculate progressPercentage based on alreadyConvertedValues and exportDataList.size
-            val progressPercentage = (alreadyConvertedValues * 100) / exportDataList.size
+                alreadyConvertedValues += 1
+                // Calculate progressPercentage based on alreadyConvertedValues and exportDataList.size
+                val progressPercentage = (alreadyConvertedValues * 100) / exportDataList.size
 
-            emit(Resource.Loading(ExportFileInfo(progressPercentage = progressPercentage)))
+                emit(Resource.Loading(ExportFileInfo(progressPercentage = progressPercentage)))
+            }
+
+            val byteArray = String(writer.buffer).toByteArray()
+
+            when (val result = fileWriter.writeFile(byteArray)) {
+                //no LOADING state for writeFile, only for convertSensorData
+                is Resource.Loading -> {
+                    emit(Resource.Error(errorMessage = "Unknown Error"))
+                }
+
+                is Resource.Error -> {
+                    emit(Resource.Error(errorMessage = result.errorMessage))
+                }
+
+                is Resource.Success -> {
+                    emit(
+                        Resource.Success(
+                            ExportFileInfo(
+                                path = result.data,
+                                byteArray = byteArray,
+                                progressPercentage = 100
+                            )
+                        )
+                    )
+                }
+            }
+
+
+        } catch (e: Exception) {
+            emit(Resource.Error(e.message.toString()))
+        } finally {
+
+            csvWriter.close()
+            writer.close()
         }
-        emit(
-            Resource.Success(
-                ExportFileInfo(
-                    byteArray = String(writer.buffer).toByteArray(),
-                )
-            )
-        )
-        csvWriter.close()
-        writer.close()
     }
         .flowOn(Dispatchers.IO)
 
