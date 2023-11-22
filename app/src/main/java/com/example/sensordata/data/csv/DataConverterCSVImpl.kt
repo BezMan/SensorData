@@ -41,7 +41,7 @@ class DataConverterCSVImpl : IDataConverter {
         exportDataList.forEach { exportModel ->
             csvWriter.writeNext(
                 arrayOf(
-                    DateTimeUtils.timestampFormatToString(exportModel.time),
+                    DateTimeUtils.fileNameFormatToString(exportModel.time),
                     "${SensorUtils.isLightInRange(exportModel.sensorData)}"
                 )
             )
